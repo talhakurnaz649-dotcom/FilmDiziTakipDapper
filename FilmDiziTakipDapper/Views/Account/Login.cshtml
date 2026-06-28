@@ -1,0 +1,42 @@
+@model FilmDiziTakipDapper.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h4 class="mb-0">🎬 CineArşiv Giriş Paneli</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" style="font-size: 0.9rem;"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="KullanıcıAdi" class="form-label"></label>
+                        <input asp-for="KullanıcıAdi" class="form-control" placeholder="Kullanıcı adınızı girin" required autofocus />
+                        <span asp-validation-for="KullanıcıAdi" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Sifre" class="form-label"></label>
+                        <input asp-for="Sifre" class="form-control" type="password" placeholder="Şifrenizi girin" required />
+                        <span asp-validation-for="Sifre" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 py-2 mt-2">Giriş Yap</button>
+                </form>
+                <div class="text-center mt-3">
+                    <span class="text-muted small">Hesabınız yok mu?</span>
+                    <a asp-action="Register" class="small text-dark fw-bold">Hemen Kaydolun</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

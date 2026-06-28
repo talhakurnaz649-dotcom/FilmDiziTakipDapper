@@ -1,0 +1,156 @@
+@model FilmDiziTakipDapper.Models.Film
+@{
+    ViewData["Title"] = "Yeni İçerik Ekle";
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white py-3">
+            <h4 class="mb-0"><i class="bi bi-plus-circle me-1"></i> Arşive Yeni Ekleme Yap</h4>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <!-- Başlık -->
+                    <div class="col-md-8 mb-3">
+                        <label asp-for="Ad" class="form-label fw-bold"></label>
+                        <input asp-for="Ad" class="form-control" placeholder="Film veya Dizi adını girin" />
+                        <span asp-validation-for="Ad" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Yayın Yılı -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Yil" class="form-label fw-bold"></label>
+                        <input asp-for="Yil" type="number" class="form-control text-center" placeholder="Örn: 2024" />
+                        <span asp-validation-for="Yil" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Format -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TurSınıfı" class="form-label fw-bold"></label>
+                        <select asp-for="TurSınıfı" class="form-select">
+                            <option value="Film">Film</option>
+                            <option value="Dizi">Dizi</option>
+                        </select>
+                        <span asp-validation-for="TurSınıfı" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Tür -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TurId" class="form-label fw-bold"></label>
+                        <select asp-for="TurId" class="form-select" asp-items="ViewBag.Turler">
+                            <option value="">-- Seçiniz --</option>
+                        </select>
+                        <span asp-validation-for="TurId" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Yönetmen -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Yonetmen" class="form-label fw-bold"></label>
+                        <input asp-for="Yonetmen" class="form-control" placeholder="Yönetmen veya yapımcı adı" />
+                        <span asp-validation-for="Yonetmen" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Durum -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Durum" class="form-label fw-bold"></label>
+                        <select asp-for="Durum" class="form-select" id="durumSelect">
+                            <option value="Izlenecek">Sonra İzleyeceğim</option>
+                            <option value="Izleniyor">Şu An İzliyorum</option>
+                            <option value="Izlendi">İzledim / Tamamlandı</option>
+                        </select>
+                        <span asp-validation-for="Durum" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Afiş Resim URL -->
+                <div class="mb-3">
+                    <label asp-for="AfisUrl" class="form-label fw-bold"></label>
+                    <input asp-for="AfisUrl" class="form-control" placeholder="Afiş görsel adresi (URL)" />
+                    <span asp-validation-for="AfisUrl" class="text-danger small"></span>
+                </div>
+
+                <div class="row">
+                    <!-- Maliyet -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Maliyet" class="form-label fw-bold">Lisans / Satın Alma Maliyeti ($)</label>
+                        <input asp-for="Maliyet" type="number" step="0.01" class="form-control" required />
+                        <span asp-validation-for="Maliyet" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Bilet Fiyatı -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="BiletFiyati" class="form-label fw-bold">Bilet Satış Fiyatı ($)</label>
+                        <input asp-for="BiletFiyati" type="number" step="0.01" class="form-control" required />
+                        <span asp-validation-for="BiletFiyati" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Bilet Başına Vergi -->
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Vergi" class="form-label fw-bold">Bilet Başına Vergi ($)</label>
+                        <input asp-for="Vergi" type="number" step="0.01" class="form-control" required />
+                        <span asp-validation-for="Vergi" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- İzleme Sonrası Değerlendirme Bölümü (Sadece İzlendi seçilirse görünür) -->
+                <div id="degerlendirmeBolumu" style="display: none;" class="p-3 bg-light rounded border border-warning mb-4">
+                    <h6 class="fw-bold text-warning border-bottom pb-2 mb-3"><i class="bi bi-star-fill me-1"></i> Kişisel Değerlendirme &amp; Puan</h6>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Puan" class="form-label fw-bold"></label>
+                        <select asp-for="Puan" class="form-select text-center" style="max-width: 150px;">
+                            @for (int i = 10; i >= 1; i--)
+                            {
+                                <option value="@i">@i / 10</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Puan" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-0">
+                        <label asp-for="Yorum" class="form-label fw-bold"></label>
+                        <textarea asp-for="Yorum" class="form-control" rows="3" placeholder="Kişisel yorum ve incelemenizi buraya yazabilirsiniz..."></textarea>
+                        <span asp-validation-for="Yorum" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-dark px-4 py-2"><i class="bi bi-check-circle"></i> Kaydet ve Ekle</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Vazgeç</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const durumSelect = document.getElementById("durumSelect");
+            const degeBolumu = document.getElementById("degerlendirmeBolumu");
+
+            function toggleDegerlendirme() {
+                if (durumSelect.value === "Izlendi") {
+                    degeBolumu.style.display = "block";
+                } else {
+                    degeBolumu.style.display = "none";
+                }
+            }
+
+            // Bind events
+            durumSelect.addEventListener("change", toggleDegerlendirme);
+            
+            // Trigger initially
+            toggleDegerlendirme();
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

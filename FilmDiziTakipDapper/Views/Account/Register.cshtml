@@ -1,0 +1,48 @@
+@model FilmDiziTakipDapper.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h4 class="mb-0">🎬 CineArşiv Kayıt Ol</h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" style="font-size: 0.9rem;"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="KullanıcıAdi" class="form-label"></label>
+                        <input asp-for="KullanıcıAdi" class="form-control" placeholder="Kullanıcı adı belirleyin" required autofocus />
+                        <span asp-validation-for="KullanıcıAdi" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="E-posta adresinizi girin" required />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Sifre" class="form-label"></label>
+                        <input asp-for="Sifre" class="form-control" type="password" placeholder="Şifrenizi belirleyin" required />
+                        <span asp-validation-for="Sifre" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 py-2 mt-2">Kaydol ve Giriş Yap</button>
+                </form>
+                <div class="text-center mt-3">
+                    <span class="text-muted small">Zaten hesabınız var mı?</span>
+                    <a asp-action="Login" class="small text-dark fw-bold">Giriş Yapın</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

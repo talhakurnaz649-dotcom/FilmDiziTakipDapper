@@ -1,0 +1,176 @@
+@model FilmDiziTakipDapper.Models.Bilet
+@{
+    ViewData["Title"] = "Bilet Ödemesi";
+    var film = ViewBag.Film as FilmDiziTakipDapper.Models.Film;
+}
+
+<div class="container mt-4" style="max-width: 800px;">
+    <div class="row g-4">
+        <!-- Bilet Özeti -->
+        <div class="col-md-5 order-md-2">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Bilet Özeti</h5>
+                    
+                    @if (film != null)
+                    {
+                        <div class="mb-3 small">
+                            <span class="text-muted d-block">İçerik Adı:</span>
+                            <strong class="text-dark">🎬 @film.Ad</strong>
+                            <span class="d-block text-secondary">(@film.TurSınıfı)</span>
+                        </div>
+                        <div class="mb-3 small">
+                            <span class="text-muted d-block">Yönetmen:</span>
+                            <span class="fw-bold">@film.Yonetmen</span>
+                        </div>
+                    }
+
+                    <div class="mb-3 small">
+                        <span class="text-muted d-block">Seçilen Koltuk:</span>
+                        <span class="badge bg-success px-3 py-2 fw-bold" style="font-size: 1rem;">Koltuk @Model.KoltukNo</span>
+                    </div>
+
+                    <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-secondary">Toplam Tutar:</span>
+                        <h4 class="fw-bold text-success mb-0">$@Model.BiletFiyati.ToString("N2")</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ödeme Formu (Kredi Kartı) -->
+        <div class="col-md-7 order-md-1">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0">💳 Ödeme ve İletişim Bilgileri</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Purchase" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" style="font-size: 0.9rem;"></div>
+                        <input type="hidden" asp-for="FilmId" />
+                        <input type="hidden" asp-for="KoltukNo" />
+                        <input type="hidden" asp-for="BiletFiyati" />
+
+                        <!-- İletişim Bilgileri -->
+                        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-person-fill text-primary me-1"></i> İzleyici Bilgileri</h6>
+                        
+                        <div class="mb-3">
+                            <label asp-for="IzleyiciAdSoyad" class="form-label"></label>
+                            <input asp-for="IzleyiciAdSoyad" class="form-control text-capitalize" placeholder="Adınız Soyadınız" required />
+                            <span asp-validation-for="IzleyiciAdSoyad" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefon" class="form-label"></label>
+                            <input asp-for="Telefon" class="form-control" id="telefonInput" placeholder="05__ ___ __ __" required />
+                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Adres" class="form-label"></label>
+                            <textarea asp-for="Adres" class="form-control" rows="2" placeholder="Fatura adresi giriniz" required></textarea>
+                            <span asp-validation-for="Adres" class="text-danger"></span>
+                        </div>
+
+                        <!-- Kart Bilgileri -->
+                        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4"><i class="bi bi-credit-card-fill text-warning me-1"></i> Kartla Ödeme Simülasyonu</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kart Üzerindeki İsim</label>
+                            <input type="text" class="form-control text-uppercase" placeholder="KART SAHİBİNİN ADI" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kart Numarası</label>
+                            <input type="text" class="form-control" id="kartNoInput" placeholder="xxxx xxxx xxxx xxxx" required />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Son Kullanma Tarihi</label>
+                                <input type="text" class="form-control text-center" id="sktInput" placeholder="AA/YY" required />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Güvenlik Kodu (CVC)</label>
+                                <input type="password" class="form-control text-center" id="cvvInput" placeholder="xxx" required />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-3 mt-3 fw-bold">🎫 Öde ve Bilet Oluştur</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Telefon Maskeleme (05XX XXX XX XX)
+            const telInput = document.getElementById("telefonInput");
+            telInput.addEventListener("input", function (e) {
+                let val = telInput.value.replace(/\D/g, "");
+                if (!val.startsWith("0")) {
+                    val = "0" + val;
+                }
+                if (val.length > 11) {
+                    val = val.substring(0, 11);
+                }
+                
+                let formatted = "";
+                if (val.length > 0) {
+                    formatted += val.substring(0, 4);
+                }
+                if (val.length > 4) {
+                    formatted += " " + val.substring(4, 7);
+                }
+                if (val.length > 7) {
+                    formatted += " " + val.substring(7, 9);
+                }
+                if (val.length > 9) {
+                    formatted += " " + val.substring(9, 11);
+                }
+                telInput.value = formatted.trim();
+            });
+
+            // Kart No Maskeleme (XXXX XXXX XXXX XXXX)
+            const kartInput = document.getElementById("kartNoInput");
+            kartInput.addEventListener("input", function (e) {
+                let val = kartInput.value.replace(/\D/g, "");
+                if (val.length > 16) {
+                    val = val.substring(0, 16);
+                }
+                let formatted = val.match(/.{1,4}/g)?.join(" ") || val;
+                kartInput.value = formatted;
+            });
+
+            // Son Kullanma Tarihi Maskeleme (AA/YY)
+            const sktInput = document.getElementById("sktInput");
+            sktInput.addEventListener("input", function (e) {
+                let val = sktInput.value.replace(/\D/g, "");
+                if (val.length > 4) {
+                    val = val.substring(0, 4);
+                }
+                if (val.length > 2) {
+                    sktInput.value = val.substring(0, 2) + "/" + val.substring(2, 4);
+                } else {
+                    sktInput.value = val;
+                }
+            });
+
+            // CVV Sınırlandırması (3 Rakam)
+            const cvvInput = document.getElementById("cvvInput");
+            cvvInput.addEventListener("input", function (e) {
+                let val = cvvInput.value.replace(/\D/g, "");
+                if (val.length > 3) {
+                    val = val.substring(0, 3);
+                }
+                cvvInput.value = val;
+            });
+        });
+    </script>
+}

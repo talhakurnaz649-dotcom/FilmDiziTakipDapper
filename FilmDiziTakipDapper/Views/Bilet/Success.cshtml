@@ -1,0 +1,50 @@
+@model FilmDiziTakipDapper.Models.Bilet
+@{
+    ViewData["Title"] = "Rezervasyon Başarılı";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow-sm border-0 border-top border-success border-4">
+        <div class="card-body p-5 text-center">
+            <div class="mb-3 text-success">
+                <i class="bi bi-check-circle-fill" style="font-size: 4rem;"></i>
+            </div>
+            <h3 class="fw-bold text-success mb-2">Bilet Satın Alındı!</h3>
+            <p class="text-muted small">Ödemeniz başarıyla alındı ve koltuğunuz rezerve edildi.</p>
+
+            <div class="my-4 p-4 bg-light rounded text-start border">
+                <h6 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="bi bi-ticket-perforated me-1"></i> Bilet Detay Kartı</h6>
+                
+                <div class="mb-2 row small">
+                    <span class="col-5 text-muted">İzleyici:</span>
+                    <strong class="col-7 text-dark">@Model.IzleyiciAdSoyad</strong>
+                </div>
+                <div class="mb-2 row small">
+                    <span class="col-5 text-muted">İçerik:</span>
+                    <strong class="col-7">🎬 @Model.FilmAd</strong>
+                </div>
+                <div class="mb-2 row small">
+                    <span class="col-5 text-muted">Koltuk Numarası:</span>
+                    <span class="col-7"><span class="badge bg-success px-3 py-1 fw-bold">Koltuk @Model.KoltukNo</span></span>
+                </div>
+                <div class="mb-2 row small">
+                    <span class="col-5 text-muted">Ödenen Tutar:</span>
+                    <strong class="col-7 text-success">$@Model.BiletFiyati.ToString("N2")</strong>
+                </div>
+                <div class="mb-2 row small">
+                    <span class="col-5 text-muted">Telefon:</span>
+                    <span class="col-7">@Model.Telefon</span>
+                </div>
+                <div class="row small">
+                    <span class="col-5 text-muted">Tarih:</span>
+                    <span class="col-7 text-secondary">@Model.Tarih.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-center">
+                <a asp-action="Index" class="btn btn-dark px-4 py-2">Biletlerim</a>
+                <a asp-controller="Film" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Arşive Dön</a>
+            </div>
+        </div>
+    </div>
+</div>

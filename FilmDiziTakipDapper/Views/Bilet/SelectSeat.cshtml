@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Koltuk Seçimi";
+    var film = ViewBag.Film as FilmDiziTakipDapper.Models.Film;
+    var bookedSeats = ViewBag.BookedSeats as List<string> ?? new List<string>();
+    char[] rows = { 'A', 'B', 'C', 'D' };
+}
+
+<div class="container mt-4" style="max-width: 800px;">
+    <div class="text-center mb-4">
+        <h2>🎬 @film?.Ad İçin Koltuk Rezervasyonu</h2>
+        <p class="text-muted">Lütfen izlemek istediğiniz koltuğu seçin.</p>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Salon Ekranı -->
+    <div class="w-100 bg-dark text-white text-center py-2 rounded mb-5 shadow-sm fw-bold border-bottom border-light border-3" style="letter-spacing: 5px;">
+        📺 SİNEMA EKRANI
+    </div>
+
+    <!-- Koltuk Şeması -->
+    <div class="d-flex flex-column align-items-center mb-5">
+        @foreach (var row in rows)
+        {
+            <div class="d-flex gap-2 mb-2 align-items-center">
+                <span class="fw-bold me-3 text-secondary" style="width: 20px;">@row</span>
+                @for (int col = 1; col <= 10; col++)
+                {
+                    var seatNo = $"{row}{col}";
+                    var isBooked = bookedSeats.Contains(seatNo);
+                    
+                    @if (isBooked)
+                    {
+                        <button type="button" class="btn btn-danger disabled" style="width: 45px; height: 45px;" title="Dolu Koltuk">
+                            <i class="bi bi-person-fill"></i>
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-outline-secondary seat-btn" data-seat="@seatNo" style="width: 45px; height: 45px;" title="Koltuk @seatNo">
+                            @seatNo
+                        </button>
+                    }
+                }
+                <span class="fw-bold ms-3 text-secondary" style="width: 20px;">@row</span>
+            </div>
+        }
+    </div>
+
+    <!-- Gösterge Bilgileri -->
+    <div class="d-flex justify-content-center gap-4 border-bottom pb-4 mb-4 small">
+        <div><span class="badge bg-secondary p-2 me-1">&nbsp;&nbsp;</span> Boş Koltuk</div>
+        <div><span class="badge bg-success p-2 me-1">&nbsp;&nbsp;</span> Seçilen Koltuk</div>
+        <div><span class="badge bg-danger p-2 me-1">&nbsp;&nbsp;</span> Dolu Koltuk</div>
+    </div>
+
+    <!-- Koltuk Seçim Özeti -->
+    <div class="card shadow-sm border-0 bg-light p-4 text-center">
+        <div class="mb-3">
+            <span class="text-muted d-block small">Seçilen Koltuk</span>
+            <h4 class="fw-bold text-success" id="selectedSeatText">- Seçilmedi -</h4>
+        </div>
+        <div class="d-flex gap-2 justify-content-center">
+            <a asp-controller="Film" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Geri Dön</a>
+            <a href="#" id="proceedBtn" class="btn btn-dark px-5 py-2 disabled"><i class="bi bi-credit-card"></i> Ödeme Adımına Geç</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const seatButtons = document.querySelectorAll(".seat-btn");
+            const selectedSeatText = document.getElementById("selectedSeatText");
+            const proceedBtn = document.getElementById("proceedBtn");
+            let selectedSeat = "";
+
+            seatButtons.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    // Reset all other selected seats
+                    seatButtons.forEach(b => {
+                        if (b !== btn) {
+                            b.classList.remove("btn-success");
+                            b.classList.add("btn-outline-secondary");
+                        }
+                    });
+
+                    // Toggle selected seat
+                    if (btn.classList.contains("btn-success")) {
+                        btn.classList.remove("btn-success");
+                        btn.classList.add("btn-outline-secondary");
+                        selectedSeat = "";
+                        selectedSeatText.innerText = "- Seçilmedi -";
+                        proceedBtn.classList.add("disabled");
+                        proceedBtn.href = "#";
+                    } else {
+                        btn.classList.remove("btn-outline-secondary");
+                        btn.classList.add("btn-success");
+                        selectedSeat = btn.getAttribute("data-seat");
+                        selectedSeatText.innerText = "Koltuk " + selectedSeat;
+                        proceedBtn.classList.remove("disabled");
+                        proceedBtn.href = `/Bilet/Checkout?filmId=@film?.Id&seatNo=${selectedSeat}`;
+                    }
+                });
+            });
+        });
+    </script>
+}

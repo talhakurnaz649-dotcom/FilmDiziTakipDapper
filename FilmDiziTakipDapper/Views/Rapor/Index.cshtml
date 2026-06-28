@@ -1,0 +1,107 @@
+@model List<FilmDiziTakipDapper.Controllers.FilmFinansRaporu>
+@{
+    ViewData["Title"] = "Finansal Analiz Raporları";
+    
+    decimal totalMaliyet = Model?.Sum(x => x.Maliyet) ?? 0;
+    int totalSatis = Model?.Sum(x => x.BiletSatisAdedi) ?? 0;
+    decimal totalGelir = Model?.Sum(x => x.ToplamGelir) ?? 0;
+    decimal totalVergi = Model?.Sum(x => x.ToplamVergi) ?? 0;
+    decimal totalNetKar = Model?.Sum(x => x.NetKar) ?? 0;
+}
+
+<div class="row align-items-center mb-4 mt-3">
+    <div class="col-md-8">
+        <h2>📊 Gemi ve Film/Dizi Finansal Performans Raporları</h2>
+        <p class="text-muted mb-0">Lisans maliyetleri, bilet satış gelirleri, vergilendirme ve net kâr/zarar analizleri</p>
+    </div>
+</div>
+
+<!-- Kart Özetleri -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 bg-dark text-white p-3 shadow-sm">
+            <span class="small text-white-50">Toplam Lisans Gideri</span>
+            <h3 class="fw-bold mb-0 mt-1">$@totalMaliyet.ToString("N2")</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-success text-white p-3 shadow-sm">
+            <span class="small text-white-50">Toplam Hasılat (Bilet)</span>
+            <h3 class="fw-bold mb-0 mt-1">$@totalGelir.ToString("N2")</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 bg-danger text-white p-3 shadow-sm">
+            <span class="small text-white-50">Toplam Ödenen Vergi</span>
+            <h3 class="fw-bold mb-0 mt-1">$@totalVergi.ToString("N2")</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 @(totalNetKar >= 0 ? "bg-primary" : "bg-warning") text-white p-3 shadow-sm">
+            <span class="small text-white-50">Genel Net Kâr/Zarar</span>
+            <h3 class="fw-bold mb-0 mt-1">$@totalNetKar.ToString("N2")</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Finans Tablosu -->
+<div class="table-responsive shadow-sm rounded border">
+    <table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-dark">
+            <tr>
+                <th>İçerik Adı</th>
+                <th class="text-end">Lisans Maliyeti</th>
+                <th class="text-center">Satılan Bilet Adedi</th>
+                <th class="text-end">Bilet Fiyatı</th>
+                <th class="text-end">Toplam Hasılat</th>
+                <th class="text-end">Ödenen Vergi</th>
+                <th class="text-end">Net Kâr / Zarar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">🎬 @item.FilmAd</td>
+                        <td class="text-end text-danger">$@item.Maliyet.ToString("N2")</td>
+                        <td class="text-center fw-bold">@item.BiletSatisAdedi</td>
+                        <td class="text-end text-muted">$@item.BiletFiyati.ToString("N2")</td>
+                        <td class="text-end text-success fw-bold">$@item.ToplamGelir.ToString("N2")</td>
+                        <td class="text-end text-secondary">$@item.ToplamVergi.ToString("N2")</td>
+                        <td class="text-end fw-bold @(item.NetKar >= 0 ? "text-success" : "text-danger")">
+                            $@item.NetKar.ToString("N2")
+                            @if (item.NetKar >= 0)
+                            {
+                                <span class="small text-success ms-1"><i class="bi bi-arrow-up-right"></i></span>
+                            }
+                            else
+                            {
+                                <span class="small text-danger ms-1"><i class="bi bi-arrow-down-left"></i></span>
+                            }
+                        </td>
+                    </tr>
+                }
+                <!-- Toplam Satırı -->
+                <tr class="table-dark fw-bold border-top border-3">
+                    <td>GENEL TOPLAM</td>
+                    <td class="text-end text-danger">$@totalMaliyet.ToString("N2")</td>
+                    <td class="text-center text-white">@totalSatis</td>
+                    <td class="text-end">-</td>
+                    <td class="text-end text-success">$@totalGelir.ToString("N2")</td>
+                    <td class="text-end text-warning">$@totalVergi.ToString("N2")</td>
+                    <td class="text-end @(totalNetKar >= 0 ? "text-success" : "text-danger")" style="font-size: 1.1rem;">
+                        $@totalNetKar.ToString("N2")
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">Sistemde kayıtlı finansal veri bulunmamaktadır.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

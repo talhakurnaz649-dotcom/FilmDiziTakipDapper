@@ -1,0 +1,194 @@
+@model List<FilmDiziTakipDapper.Models.Film>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "İzleme Listem";
+    var role = HttpContextAccessor.HttpContext?.Session.GetString("Role");
+    var isAdmin = role == "Admin";
+}
+
+<div class="row align-items-center mb-4 mt-3">
+    <div class="col-md-6">
+        <h2>🎬 CineArşiv Kütüphanesi</h2>
+        <p class="text-muted mb-0">Dapper ORM ile geliştirilmiş yüksek performanslı arşiv kütüphanesi</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        @if (isAdmin)
+        {
+            <a asp-action="Create" class="btn btn-dark"><i class="bi bi-plus-circle me-1"></i> Yeni İçerik Ekle</a>
+        }
+    </div>
+</div>
+
+<!-- Filtreleme Paneli -->
+<div class="card border-0 bg-light p-3 mb-4 shadow-sm">
+    <form method="get" asp-action="Index" class="row g-2 align-items-center">
+        <!-- Arama -->
+        <div class="col-md-3">
+            <input type="text" name="search" class="form-control" placeholder="İçerik adı ara..." value="@ViewBag.SearchTerm" />
+        </div>
+        
+        <!-- Format -->
+        <div class="col-md-2">
+            <select name="format" class="form-select">
+                <option value="">-- Tüm Formatlar --</option>
+                @if (ViewBag.SelectedFormat == "Film")
+                {
+                    <option value="Film" selected>Film</option>
+                }
+                else
+                {
+                    <option value="Film">Film</option>
+                }
+                
+                @if (ViewBag.SelectedFormat == "Dizi")
+                {
+                    <option value="Dizi" selected>Dizi</option>
+                }
+                else
+                {
+                    <option value="Dizi">Dizi</option>
+                }
+            </select>
+        </div>
+
+        <!-- Durum -->
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">-- Tüm Durumlar --</option>
+                @if (ViewBag.SelectedStatus == "Izlenecek")
+                {
+                    <option value="Izlenecek" selected>Sonra İzlenecekler</option>
+                }
+                else
+                {
+                    <option value="Izlenecek">Sonra İzlenecekler</option>
+                }
+
+                @if (ViewBag.SelectedStatus == "Izleniyor")
+                {
+                    <option value="Izleniyor" selected>Şu An İzlenenler</option>
+                }
+                else
+                {
+                    <option value="Izleniyor">Şu An İzlenenler</option>
+                }
+
+                @if (ViewBag.SelectedStatus == "Izlendi")
+                {
+                    <option value="Izlendi" selected>İzlenmiş / Tamamlanmış</option>
+                }
+                else
+                {
+                    <option value="Izlendi">İzlenmiş / Tamamlanmış</option>
+                }
+            </select>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-secondary flex-grow-1"><i class="bi bi-filter"></i> Filtrele</button>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i> Sıfırla</a>
+        </div>
+    </form>
+</div>
+
+<!-- Film & Dizi Listesi (Bootstrap Kartlar) -->
+<div class="row g-4">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div style="height: 250px; overflow: hidden; background-color: #2b2b2b; position: relative;" class="d-flex align-items-center justify-content-center">
+                        @if (!string.IsNullOrEmpty(item.AfisUrl))
+                        {
+                            <img src="@item.AfisUrl" class="card-img-top" style="height: 100%; width: 100%; object-fit: cover;" alt="@item.Ad" onerror="this.src='/images/placeholder.jpg'; this.onerror=null;">
+                        }
+                        else
+                        {
+                            <div class="text-white text-center">
+                                <i class="bi bi-film" style="font-size: 4rem;"></i>
+                                <span class="d-block small text-white-50 mt-2">Afiş Bulunmuyor</span>
+                            </div>
+                        }
+                        <span class="position-absolute top-3 start-3 badge @(item.TurSınıfı == "Film" ? "bg-primary" : "bg-info") px-3 py-1">
+                            @item.TurSınıfı
+                        </span>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold mb-0 text-dark">@item.Ad</h5>
+                            <span class="badge rounded-pill bg-light text-dark border">@item.Yil</span>
+                        </div>
+                        
+                        <p class="text-secondary small mb-3">
+                            <strong>Yönetmen:</strong> @item.Yonetmen<br>
+                            <strong>Tür:</strong> @item.TurAd
+                        </p>
+
+                        <!-- Puan (Yıldızlar) -->
+                        <div class="mb-3">
+                            @if (item.Durum == "Izlendi")
+                            {
+                                <div class="text-warning">
+                                    @for (int i = 1; i <= 10; i++)
+                                    {
+                                        if (i <= item.Puan)
+                                        {
+                                            <i class="bi bi-star-fill" style="font-size: 0.85rem;"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star" style="font-size: 0.85rem;"></i>
+                                        }
+                                    }
+                                    <span class="text-dark small ms-1 fw-bold">(@item.Puan/10)</span>
+                                </div>
+                            }
+                            else if (item.Durum == "Izleniyor")
+                            {
+                                <span class="badge bg-warning text-dark"><i class="bi bi-play-circle-fill me-1"></i> Şu An İzleniyor</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary"><i class="bi bi-clock me-1"></i> Sonra İzlenecek</span>
+                            }
+                        </div>
+
+                        <!-- Kişisel Yorum -->
+                        <p class="card-text text-muted small flex-grow-1" style="font-style: italic;">
+                            @(string.IsNullOrEmpty(item.Yorum) ? "Henüz kişisel yorum eklenmemiş." : $"\"{item.Yorum}\"")
+                        </p>
+
+                        <div class="border-top pt-3 mt-3">
+                            @if (isAdmin)
+                            {
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark px-3"><i class="bi bi-pencil"></i> Düzenle</a>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu içeriği arşivinizden silmek istediğinize emin misiniz?');" style="margin: 0;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Sil</button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <a asp-controller="Bilet" asp-action="SelectSeat" asp-route-filmId="@item.Id" class="btn btn-success w-100 py-2 fw-bold"><i class="bi bi-ticket-perforated"></i> Bilet Al &amp; İzle ($@item.BiletFiyati.ToString("N2"))</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="bi bi-camera-reels" style="font-size: 4rem;"></i>
+            <h5 class="mt-3">Arşivinizde İçerik Bulunmuyor</h5>
+            <p class="small">Filtrelerinizi sıfırlayabilir veya ilk içeriğinizi ekleyebilirsiniz.</p>
+        </div>
+    }
+</div>
