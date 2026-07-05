@@ -1,4 +1,7 @@
-# Film ve Dizi Takip Sistemi (İzleme Günlüğü)
+﻿# Film ve Dizi Takip Sistemi (İzleme Günlüğü)
+
+![Proje ArayÃ¼zÃ¼](screenshot.jpg)
+
 
 Kullanıcıların izledikleri veya gelecekte izlemek istedikleri film ve dizileri listeleyip puanlayabildikleri, kişisel bir izleme günlüğü (watchlist) uygulamasıdır.
 
