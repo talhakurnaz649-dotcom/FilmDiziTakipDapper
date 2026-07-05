@@ -1,18 +1,18 @@
-﻿# Film ve Dizi Takip Sistemi (Ä°zleme GÃ¼nlÃ¼ÄŸÃ¼)
+# Film ve Dizi Takip Sistemi (İzleme Günlüğü)
 
-KullanÄ±cÄ±larÄ±n izledikleri veya gelecekte izlemek istedikleri film ve dizileri listeleyip puanlayabildikleri, kiÅŸisel bir izleme gÃ¼nlÃ¼ÄŸÃ¼ (watchlist) uygulamasÄ±dÄ±r.
+Kullanıcıların izledikleri veya gelecekte izlemek istedikleri film ve dizileri listeleyip puanlayabildikleri, kişisel bir izleme günlüğü (watchlist) uygulamasıdır.
 
-## ğŸš€ KullanÄ±lan Teknolojiler
+## 🚀 Kullanılan Teknolojiler
 * **Mimari:** ASP.NET Core MVC
-* **Veri TabanÄ± / ORM:** Dapper ORM & SQL Server (Hafif ve hÄ±zlÄ± veri eriÅŸim altyapÄ±sÄ±)
-* **TasarÄ±m:** HTML, CSS, JavaScript, Bootstrap
+* **Veri Tabanı / ORM:** Dapper ORM & SQL Server (Hafif ve hızlı veri erişim altyapısı)
+* **Tasarım:** HTML, CSS, JavaScript, Bootstrap
 
-## âœ¨ Ã–zellikler / YapÄ±
-* Ä°zleme listesi (Watchlist) yÃ¶netimi.
-* Ä°zlenen yapÄ±mlara Ã¶zel puanlama, inceleme ve yorum ekleme.
-* Dapper ORM kullanÄ±mÄ± sayesinde hÄ±zlÄ± veritabanÄ± sorgularÄ±.
+## ✨ Özellikler / Yapı
+* İzleme listesi (Watchlist) yönetimi.
+* İzlenen yapımlara özel puanlama, inceleme ve yorum ekleme.
+* Dapper ORM kullanımı sayesinde hızlı veritabanı sorguları.
 
-## ğŸ› ï¸ NasÄ±l Ã‡alÄ±ÅŸtÄ±rÄ±lÄ±r?
-1. SQL Server Ã¼zerinde gerekli tablolarÄ± oluÅŸturun.
-2. `appsettings.json` iÃ§indeki SQL baÄŸlantÄ± dizesini yerel sunucunuza gÃ¶re dÃ¼zenleyin.
-3. Visual Studio'da projeyi Ã§alÄ±ÅŸtÄ±rÄ±n.
+## 🛠️ Nasıl Çalıştırılır?
+1. SQL Server üzerinde gerekli tabloları oluşturun.
+2. `appsettings.json` içindeki SQL bağlantı dizesini yerel sunucunuza göre düzenleyin.
+3. Visual Studio'da projeyi çalıştırın.
